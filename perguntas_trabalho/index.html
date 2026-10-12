@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Literário - Geração de 45</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        dark: '#0f172a', /* slate-900 */
+                        paper: '#1e293b', /* slate-800 */
+                        gold: '#d97706', /* amber-600 */
+                        goldlight: '#fcd34d', /* amber-300 */
+                    },
+                    fontFamily: {
+                        serif: ['"Playfair Display"', 'serif'],
+                        body: ['"Lora"', 'serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #020617; /* slate-950 */
+            background-image: radial-gradient(circle at 50% 0%, #1e293b 0%, #020617 70%);
+            color: #f8fafc;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(252, 211, 77, 0.1);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .btn-option {
+            transition: all 0.3s ease;
+            border: 1px solid rgba(252, 211, 77, 0.2);
+        }
+
+        .btn-option:hover {
+            border-color: #d97706;
+            background: rgba(217, 119, 6, 0.1);
+            transform: translateX(5px);
+        }
+
+        .fade-in {
+            animation: fadeIn 0.6s ease-out forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .hidden-screen {
+            display: none !important;
+        }
+    </style>
+</head>
+<body class="font-body flex flex-col items-center justify-center p-4 selection:bg-gold selection:text-white">
+
+    <div id="start-screen" class="glass-panel w-full max-w-3xl rounded-sm p-10 md:p-16 text-center fade-in border-t-4 border-t-gold">
+        <div class="mb-6 flex justify-center">
+            <svg class="w-12 h-12 text-gold opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+        </div>
+        <h1 class="font-serif text-4xl md:text-5xl font-bold mb-4 tracking-wide text-goldlight">A Terceira Geração</h1>
+        <h2 class="text-xl md:text-2xl text-slate-300 mb-10 font-light italic">O rigor, a mente e o sertão</h2>
+        <p class="text-slate-400 mb-12 max-w-xl mx-auto leading-relaxed">
+            Mergulhe na fase mais madura do Modernismo Brasileiro. Teste seus conhecimentos sobre a Geração de 45 através de uma jornada literária.
+        </p>
+        <button onclick="startQuiz()" class="font-serif text-lg tracking-widest uppercase px-10 py-4 border border-gold text-gold hover:bg-gold hover:text-dark transition-all duration-300 rounded-sm">
+            Iniciar Jornada
+        </button>
+    </div>
+
+    <div id="quiz-screen" class="hidden-screen w-full max-w-3xl flex flex-col fade-in">
+        <div class="flex justify-between items-end mb-8 border-b border-slate-700 pb-4">
+            <span class="font-serif text-gold tracking-widest text-sm uppercase">Questão <span id="question-counter">1</span> de 6</span>
+            <span class="font-serif text-slate-400 text-sm">Pontuação: <span id="score-display" class="text-goldlight">0</span></span>
+        </div>
+
+        <div class="glass-panel rounded-sm p-8 md:p-12 mb-8 border-l-4 border-l-gold">
+            <h2 id="question-text" class="font-serif text-2xl md:text-3xl leading-snug text-slate-100">
+                <!-- Pergunta -->
+            </h2>
+        </div>
+
+        <div id="options-container" class="flex flex-col gap-4">
+            <!-- Botões gerados via JS -->
+        </div>
+    </div>
+
+    <div id="feedback-screen" class="hidden-screen fixed inset-0 z-50 flex items-center justify-center p-4 bg-dark/90 backdrop-blur-md">
+        <div class="glass-panel w-full max-w-lg rounded-sm p-10 text-center border-t-4" id="feedback-panel">
+            <h3 id="feedback-title" class="font-serif text-4xl font-bold mb-4">Título</h3>
+            <p id="feedback-correct-answer" class="text-goldlight font-bold mb-4 hidden-screen text-lg">A resposta correta era: ...</p>
+            <p id="feedback-message" class="text-slate-300 mb-10 text-lg italic">Mensagem</p>
+            <button onclick="nextQuestion()" class="font-serif tracking-widest uppercase px-8 py-3 border border-slate-500 text-slate-300 hover:bg-slate-800 hover:text-white transition-all rounded-sm">
+                Continuar
+            </button>
+        </div>
+    </div>
+
+    <div id="end-screen" class="hidden-screen glass-panel w-full max-w-3xl rounded-sm p-10 md:p-16 text-center fade-in border-y-4 border-gold">
+        <h1 class="font-serif text-4xl md:text-5xl font-bold mb-6 text-goldlight">Epílogo</h1>
+        <p class="text-xl text-slate-300 mb-8">Sua jornada pela Geração de 45 chegou ao fim.</p>
+        
+        <div class="text-6xl font-serif text-gold mb-6">
+            <span id="final-score">0</span><span class="text-3xl text-slate-500">/6</span>
+        </div>
+        
+        <p id="end-message" class="text-slate-400 mb-12 max-w-xl mx-auto text-lg italic">
+            Mensagem final
+        </p>
+        
+        <button onclick="location.reload()" class="font-serif text-lg tracking-widest uppercase px-10 py-4 border border-gold text-gold hover:bg-gold hover:text-dark transition-all duration-300 rounded-sm">
+            Refazer Quiz
+        </button>
+    </div>
+
+    <script>
+        const quizData = [
+            {
+                question: "Qual contexto histórico e político marca o surgimento da Geração de 45 na literatura brasileira?",
+                options: [
+                    "O auge da ditadura militar no Brasil e a censura às artes.",
+                    "O fim da Segunda Guerra Mundial e a queda do Estado Novo de Getúlio Vargas.",
+                    "A abolição da escravatura e a Proclamação da República.",
+                    "O início da Primeira Guerra Mundial e a fundação de São Paulo."
+                ],
+                correct: 1,
+                explanation: "Em 1945, o mundo via o fim da 2ª Guerra e o Brasil presenciava a queda da ditadura de Vargas, iniciando um período de redemocratização."
+            },
+            {
+                question: "Em oposição aos modernistas de 1922, como os poetas da Geração de 45 encaravam a forma poética?",
+                options: [
+                    "Aboliram qualquer regra gramatical, escrevendo poemas sem sentido lógico.",
+                    "Buscavam imitar os poetas românticos, focando apenas no exagero sentimental.",
+                    "Valorizavam o rigor formal, resgatando a métrica, a rima e formas clássicas como o soneto.",
+                    "Escreviam exclusivamente em prosa, decretando o fim da poesia no Brasil."
+                ],
+                correct: 2,
+                explanation: "A Geração de 45 foi marcada por um retorno ao equilíbrio, à disciplina e ao rigor da forma, rejeitando a bagunça inicial do Modernismo."
+            },
+            {
+                question: "Conhecido como o 'engenheiro das palavras', este poeta pernambucano construía seus poemas com extrema objetividade e escreveu 'Morte e Vida Severina'. Quem é ele?",
+                options: [
+                    "Carlos Drummond de Andrade",
+                    "Vinicius de Moraes",
+                    "Manuel Bandeira",
+                    "João Cabral de Melo Neto"
+                ],
+                correct: 3,
+                explanation: "João Cabral de Melo Neto rejeitava a inspiração e via a poesia como fruto do suor, da lógica e do trabalho intelectual rigoroso."
+            },
+            {
+                question: "Clarice Lispector é um dos maiores nomes desta geração. Qual é a principal característica de sua obra?",
+                options: [
+                    "Prosa regionalista com foco exclusivo na denúncia da fome no Nordeste.",
+                    "Mergulho na psicologia das personagens, utilizando fluxo de consciência e momentos de epifania.",
+                    "Romances históricos que narram detalhadamente as batalhas do Brasil Colônia.",
+                    "Textos puramente jornalísticos sobre a vida urbana carioca."
+                ],
+                correct: 1,
+                explanation: "Clarice inovou ao deixar a ação externa de lado para focar no mundo interior (psicológico) de suas personagens, mostrando crises existenciais a partir do cotidiano."
+            },
+            {
+                question: "João Guimarães Rosa transformou a literatura brasileira com sua obra 'Grande Sertão: Veredas'. O que define o seu estilo?",
+                options: [
+                    "O Regionalismo Universal, misturando o falar sertanejo a neologismos para discutir dilemas humanos universais.",
+                    "A recusa em usar o cenário brasileiro, situando todas as suas histórias na Europa.",
+                    "Uma linguagem simples, coloquial e urbana, para atingir o público jovem.",
+                    "A poesia matemática e objetiva, totalmente livre de emoções."
+                ],
+                correct: 0,
+                explanation: "Rosa imortalizou a frase 'O sertão é o mundo'. Ele usou o interior do Brasil como palco para os grandes temas da humanidade, criando uma linguagem totalmente nova."
+            },
+            {
+                question: "A terceira geração também consolidou a Prosa Urbana e a Crônica. Qual era o foco principal desse gênero nesse período?",
+                options: [
+                    "Retratar a vida dos cangaceiros através de crônicas diárias nos jornais.",
+                    "Documentar estritamente a vida rural das antigas fazendas de café do século XIX.",
+                    "Falar exclusivamente sobre temas religiosos e morais.",
+                    "Retratar a vida nas grandes cidades, os dramas da classe média e as reflexões sobre o cotidiano urbano."
+                ],
+                correct: 3,
+                explanation: "Com o crescimento do país, a prosa urbana e a crônica ganharam força. Autores como Lygia Fagundes Telles e Rubem Braga se destacaram ao explorar o dia a dia nas metrópoles."
+            }
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+
+        const screens = {
+            start: document.getElementById('start-screen'),
+            quiz: document.getElementById('quiz-screen'),
+            feedback: document.getElementById('feedback-screen'),
+            end: document.getElementById('end-screen')
+        };
+
+        function hideAllScreens() {
+            Object.values(screens).forEach(screen => screen.classList.add('hidden-screen'));
+        }
+
+        function startQuiz() {
+            hideAllScreens();
+            screens.quiz.classList.remove('hidden-screen');
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            const q = quizData[currentQuestion];
+            document.getElementById('question-counter').innerText = currentQuestion + 1;
+            document.getElementById('question-text').innerText = q.question;
+            
+            const optionsContainer = document.getElementById('options-container');
+            optionsContainer.innerHTML = ''; // Limpa opções anteriores
+
+            q.options.forEach((opt, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'btn-option bg-paper/50 text-slate-200 text-left p-6 rounded-sm font-body text-lg w-full flex items-center gap-4';
+                
+                // Letra da opção (A, B, C, D)
+                const letter = String.fromCharCode(65 + index);
+                
+                btn.innerHTML = `
+                    <span class="font-serif text-gold font-bold text-xl min-w-[2rem]">${letter}.</span>
+                    <span>${opt}</span>
+                `;
+                btn.onclick = () => checkAnswer(index);
+                optionsContainer.appendChild(btn);
+            });
+        }
+
+        function checkAnswer(selectedIndex) {
+            const isCorrect = selectedIndex === quizData[currentQuestion].correct;
+            const panel = document.getElementById('feedback-panel');
+            const correctAnswerEl = document.getElementById('feedback-correct-answer');
+            
+            if (isCorrect) {
+                score++;
+                document.getElementById('score-display').innerText = score;
+                document.getElementById('feedback-title').innerText = "Correto";
+                document.getElementById('feedback-title').className = "font-serif text-4xl font-bold mb-4 text-emerald-400";
+                panel.style.borderTopColor = "#34d399"; // emerald-400
+                correctAnswerEl.classList.add('hidden-screen'); // Esconde a mensagem de resposta certa
+            } else {
+                document.getElementById('feedback-title').innerText = "Incorreto";
+                document.getElementById('feedback-title').className = "font-serif text-4xl font-bold mb-4 text-red-400";
+                panel.style.borderTopColor = "#f87171"; // red-400
+                
+                // Mostra a resposta correta em destaque
+                const correctText = quizData[currentQuestion].options[quizData[currentQuestion].correct];
+                correctAnswerEl.innerText = "A resposta correta era: " + correctText;
+                correctAnswerEl.classList.remove('hidden-screen');
+            }
+
+            document.getElementById('feedback-message').innerText = quizData[currentQuestion].explanation;
+            screens.feedback.classList.remove('hidden-screen');
+        }
+
+        function nextQuestion() {
+            screens.feedback.classList.add('hidden-screen');
+            currentQuestion++;
+
+            if (currentQuestion < quizData.length) {
+                loadQuestion();
+            } else {
+                showEndScreen();
+            }
+        }
+
+        function showEndScreen() {
+            hideAllScreens();
+            screens.end.classList.remove('hidden-screen');
+            document.getElementById('final-score').innerText = score;
+            
+            const msgEl = document.getElementById('end-message');
+            if (score === 6) {
+                msgEl.innerText = "Um domínio magistral! Você compreende perfeitamente a profundidade, a estética e as inovações da Geração de 45.";
+            } else if (score >= 4) {
+                msgEl.innerText = "Excelente leitura! Você possui um ótimo entendimento sobre os autores e as características deste período literário.";
+            } else {
+                msgEl.innerText = "A literatura exige releituras. Aproveite para revisar as obras de Clarice, Guimarães Rosa e João Cabral.";
+            }
+        }
+    </script>
+</body>
+</html>
